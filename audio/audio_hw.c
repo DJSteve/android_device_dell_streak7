@@ -198,10 +198,7 @@ static void select_devices(struct audio_device *adev)
     if (docked)
         audio_route_apply_path(adev->ar, "dock");
     if (main_mic_on) {
-        if (adev->orientation == ORIENTATION_LANDSCAPE)
             audio_route_apply_path(adev->ar, "main-mic-left");
-        else
-            audio_route_apply_path(adev->ar, "main-mic-top");
     }
 
     update_mixer_state(adev->ar);

@@ -1,5 +1,8 @@
 # Dell Streak 7 Make File
 
+# inherit vendor specific blobs
+$(call inherit-product-if-exists, vendor/dell/streak7/streak7-vendor.mk)
+
 # Boot animation
 TARGET_SCREEN_HEIGHT := 480
 TARGET_SCREEN_WIDTH := 800
@@ -42,8 +45,29 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/bluetooth/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
 
+PRODUCT_CHARACTERISTICS := tablet
+
+PRODUCT_TAGS += dalvik.gc.type-precise
     
 PRODUCT_PACKAGES += \
+    com.android.future.usb.accessory \
+    audio.primary.streak7 \
+    audio_policy.streak7 \
+    audio.a2dp.default \
+    libaudioutils \
+    libtinyalsa \
+    audio.usb.default \
+    libaudioutils \
+    libtinyalsa \
+    l2ping \
+    hciconfig \
+    hcitool \
+    libnetcmdiface \
+    liba2dp \
+    tinymix \
+    tinyplay \
+    tinycap \
+    tinyrec \
     lights.streak7 \
     sensors.streak7 \
     power.streak7 \
@@ -67,7 +91,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.usb.default \
-    audio.primary.streak7 \
     libaudioutils \
     liba2dp \
     libasound \
@@ -84,9 +107,6 @@ PRODUCT_PACKAGES += \
     fw_bcm4329_apsta.bin
 
 # we have enough storage space to hold precise GC data
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-PRODUCT_CHARACTERISTICS := tablet
 
 # override
 PRODUCT_PROPERTY_OVERRIDES := \
@@ -96,6 +116,37 @@ PRODUCT_PROPERTY_OVERRIDES := \
     persist.sys.usb.config=mtp,adb \
     wifi.supplicant_scan_interval=180
 
+PRODUCT_PROPERTY_OVERRIDES := \
+    ro.dinfo.radio=Wifi \
+    ro.bq.gpu_to_cpu_unsupported=1 \
+    debug.hwui.render_dirty_regions=false \
+    ro.opengles.version=131072 \
+    ro.opengles.surface.rgb565=true \
+    ro.hwui.use_gpu_pixel_buffers=false
+
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.secure=0 \
+    persist.sys.strictmode.visual=0
+
+ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+ADDITIONAL_DEFAULT_PROPERTIES += persist.sys.strictmode.visual=0
+
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.zygote.disable_gl_preload=true
+
+PRODUCT_CHARACTERISTICS := tablet
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.dexopt-data-only=1 \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heapgrowthlimit=96m \
+    dalvik.vm.heapsize=300m \
+    dalvik.vm.heaptargetutilization=0.75 \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapmaxfree=8m
+
 
 DEVICE_PACKAGE_OVERLAYS := device/dell/streak7/overlay
-$(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
+# Omni packages
+PRODUCT_PACKAGES += \
+        OmniSwitch

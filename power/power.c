@@ -19,19 +19,18 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define LOG_TAG "P3 PowerHAL"
+#define LOG_TAG "Wingray PowerHAL"
 #include <utils/Log.h>
 
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
 #define SCALINGMAXFREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
-#define SCREENOFFMAXFREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/screen_off_max_freq"
 #define BOOST_PATH      "/sys/devices/system/cpu/cpufreq/interactive/boost"
 static int boost_fd = -1;
 static int boost_warned;
 
-#define MAX_BUF_SZ  10
+#define MAX_BUF_SZ	10
 
 /* initialize to something safe */
 static char screen_off_max_freq[MAX_BUF_SZ] = "456000";
@@ -75,7 +74,7 @@ static void sysfs_write(char *path, char *s)
     close(fd);
 }
 
-static void p3_power_init(struct power_module *module)
+static void streak7_power_init(struct power_module *module)
 {
     /*
      * cpufreq interactive governor: timer 20ms, min sample 30ms.
@@ -87,13 +86,13 @@ static void p3_power_init(struct power_module *module)
                 "40000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
                 "80");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost",
 		"0");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
-		"1");
+    //sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+		//"1");
 }
 
-static void p3_power_set_interactive(struct power_module *module, int on)
+static void streak7_power_set_interactive(struct power_module *module, int on)
 {
     int len;
     char buf[MAX_BUF_SZ];
@@ -120,15 +119,15 @@ static void p3_power_set_interactive(struct power_module *module, int on)
     if ((on) && (len = screen_off_max_freq))
         sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", scaling_max_freq);
 
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost",
                 on ? "1" : "0");
 
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
-		on ? "0" : "2");
+    //sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+		//on ? "0" : "2");
 
 }
 
-static void p3_power_hint(struct power_module *module, power_hint_t hint,
+static void streak7_power_hint(struct power_module *module, power_hint_t hint,
                             void *data)
 {
     char buf[80];
@@ -153,12 +152,12 @@ struct power_module HAL_MODULE_INFO_SYM = {
         .module_api_version = POWER_MODULE_API_VERSION_0_2,
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = POWER_HARDWARE_MODULE_ID,
-        .name = "Streak 7 Power HAL",
-        .author = "The Android Open Source Project",
+        .name = "Streak7 Power HAL",
+        .author = "AOSP/DJSteve",
         .methods = &power_module_methods,
     },
 
-    .init = p3_power_init,
-    .setInteractive = p3_power_set_interactive,
-    .powerHint = p3_power_hint,
+    .init = streak7_power_init,
+    .setInteractive = streak7_power_set_interactive,
+    .powerHint = streak7_power_hint,
 };
