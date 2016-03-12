@@ -12,43 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := $(call my-dir)
+LOCAL_PATH:= $(call my-dir)
+# HAL module implemenation, not prelinked and stored in
+# hw/<COPYPIX_HARDWARE_MODULE_ID>.<ro.product.board>.so
 
 include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := \
-    AudioPolicyManager.cpp
-
-LOCAL_SHARED_LIBRARIES := \
-    libcutils \
-    libutils
-
-LOCAL_STATIC_LIBRARIES := \
-    libmedia_helper
-
-LOCAL_WHOLE_STATIC_LIBRARIES := \
-    libaudiopolicy_legacy
-
-LOCAL_MODULE := audio_policy.streak7
+LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+LOCAL_SHARED_LIBRARIES := liblog libcutils libhardware \
+    libhardware_legacy libutils libdl
+
+LOCAL_SRC_FILES := hwc_tegra2.cpp
+
+LOCAL_C_INCLUDES += $(LOCAL_PATH)
+LOCAL_CPP_INCLUDES += $(LOCAL_PATH)
+
+LOCAL_MODULE := hwcomposer.streak7
 LOCAL_MODULE_TAGS := optional
-
 include $(BUILD_SHARED_LIBRARY)
-
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := audio.primary.streak7
-LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
-LOCAL_SRC_FILES := \
-	audio_hw.c \
-	audio_route.c
-LOCAL_C_INCLUDES += \
-	external/tinyalsa/include \
-	external/expat/lib \
-	$(call include-path-for, audio-utils)
-LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libexpat
-LOCAL_MODULE_TAGS := optional
-
-include $(BUILD_SHARED_LIBRARY)
-

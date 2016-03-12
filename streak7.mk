@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     audio.primary.streak7 \
     audio_policy.streak7 \
     audio.a2dp.default \
+    hwcomposer.streak7 \
     libaudioutils \
     libtinyalsa \
     audio.usb.default \
